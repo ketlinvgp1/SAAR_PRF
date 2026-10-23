@@ -3,13 +3,16 @@ package br.com.saarprf.saarprf.controller;
 
 import br.com.saarprf.saarprf.model.Acidente;
 import br.com.saarprf.saarprf.service.AcidenteService;
-
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+import br.com.saarprf.saarprf.dto.ResultadoImportacao;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Map;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("/api/acidentes")
@@ -55,9 +58,9 @@ public class AcidenteController {
     @PutMapping("/{id}")
     public ResponseEntity<Acidente> atualizar(
             @PathVariable Long id,
-            @RequestBody Acidente acidente) {
-
-        return service.atualizar(id, acidente)
+            @Valid @RequestBody Acidente acidente)
+        {
+        return service.atualizar(id,acidente)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -82,4 +85,30 @@ public class AcidenteController {
 
         return ResponseEntity.ok(service.filtrar(uf, rodovia));
     }
+
+    @PostMapping("/importar")
+    public ResponseEntity<?> importar(
+            @RequestParam("arquivo") MultipartFile arquivo) {
+
+        try {
+            ResultadoImportacao resultado = service.importar(arquivo);
+
+            return ResponseEntity.ok(resultado);
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.badRequest()
+                    .body(Map.of("erro", e.getMessage()));
+        }
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> tratarErro(
+            IllegalArgumentException e) {
+
+        return ResponseEntity.badRequest()
+                .body(Map.of("erro", e.getMessage()));
+    }
+
+
 }

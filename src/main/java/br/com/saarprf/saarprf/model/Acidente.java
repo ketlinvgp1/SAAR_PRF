@@ -3,6 +3,8 @@ package br.com.saarprf.saarprf.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMin;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,17 +21,31 @@ public class Acidente {
     @Column(unique = true)
     private Long idPrf;
 
+    @NotNull(message = "A data é obrigatória")
     private LocalDate dataOcorrencia;
+
+    @NotNull(message = "O horário é obrigatório")
     private LocalTime horario;
+
     @NotBlank(message = "A UF é obrigatória")
     private String uf;
+
+    @NotBlank(message = "O município é obrigatório")
     private String municipio;
+
+    @NotBlank(message = "A rodovia é obrigatória")
     private String rodovia;
+
+    @NotNull(message = "O quilômetro é obrigatório")
+    @DecimalMin(value = "0.0", message = "O quilômetro não pode ser negativo")
     private BigDecimal quilometro;
 
+    @NotBlank(message = "A causa do acidente é obrigatória")
     @Column(length = 500)
     private String causaAcidente;
 
+
+    @NotBlank(message = "A classificação é obrigatória")
     private String classificacao;
 
     public Long getId() {
