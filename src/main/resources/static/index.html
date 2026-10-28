@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SAAR PRF - Sistema de Análise de Acidentes Rodoviários</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Biblioteca para o gráfico -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header class="topo">
+    <div class="container">
+        <div>
+            <h1>SAAR PRF</h1>
+            <p>Sistema de Análise de Acidentes Rodoviários</p>
+        </div>
+    </div>
+</header>
+
+
+<main class="container">
+
+    <!-- =========================
+         MENSAGENS
+    ========================== -->
+
+    <div id="mensagem" class="mensagem oculto"></div>
+
+
+    <!-- =========================
+         RESUMO
+    ========================== -->
+
+    <section class="secao">
+
+        <h2>Resumo</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <span class="card-titulo">Total de acidentes</span>
+
+                <strong id="totalAcidentes">
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FILTROS
+    ========================== -->
+
+    <section class="secao">
+
+        <div class="secao-titulo">
+            <div>
+                <h2>Filtros</h2>
+                <p>Consulte acidentes por UF e rodovia.</p>
+            </div>
+        </div>
+
+        <form id="formFiltro" class="form-grid">
+
+            <div class="campo">
+                <label for="filtroId">Buscar por ID</label>
+
+                <input
+                        type="number"
+                        id="filtroId"
+                        min="1"
+                        placeholder="Ex.: 10"
+                >
+            </div>
+
+
+            <div class="acoes-form">
+
+                <button
+                        type="button"
+                        id="btnBuscarId"
+                        class="btn btn-secundario"
+                >
+                    Buscar ID
+                </button>
+
+                <button
+                        type="submit"
+                        class="btn btn-primario"
+                >
+                    Filtrar
+                </button>
+
+                <button
+                        type="button"
+                        id="btnLimparFiltro"
+                        class="btn btn-secundario"
+                >
+                    Limpar
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================
+         CADASTRO / EDIÇÃO
+    ========================== -->
+
+    <section class="secao">
+
+        <div class="secao-titulo">
+
+            <div>
+                <h2 id="tituloFormulario">
+                    Cadastrar acidente
+                </h2>
+
+                <p>
+                    Preencha os dados da ocorrência.
+                </p>
+            </div>
+
+        </div>
+
+
+        <form id="formAcidente">
+
+            <!-- usado quando estiver editando -->
+            <input
+                    type="hidden"
+                    id="acidenteId"
+            >
+
+
+            <div class="form-grid">
+
+                <div class="campo">
+                    <label for="idPrf">
+                        ID PRF
+                    </label>
+
+                    <input
+                            type="number"
+                            id="idPrf"
+                            min="1"
+                            placeholder="Identificador original da PRF"
+                    >
+                </div>
+
+
+                <div class="campo">
+                    <label for="dataOcorrencia">
+                        Data *
+                    </label>
+
+                    <input
+                            type="date"
+                            id="dataOcorrencia"
+                            required
+                    >
+                </div>
+
+
+                <div class="campo">
+                    <label for="horario">
+                        Horário *
+                    </label>
+
+                    <input
+                            type="time"
+                            id="horario"
+                            required
+                    >
+                </div>
+
+
+                <div class="campo">
+                    <label for="uf">
+                        UF *
+                    </label>
+
+                    <select id="uf" required>
+
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+
+                    </select>
+                </div>
+
+
+                <div class="campo">
+                    <label for="municipio">
+                        Município *
+                    </label>
+
+                    <input
+                            type="text"
+                            id="municipio"
+                            required
+                            placeholder="Ex.: São Bernardo do Campo"
+                    >
+                </div>
+
+
+                <div class="campo">
+                    <label for="rodovia">
+                        Rodovia *
+                    </label>
+
+                    <input
+                            type="text"
+                            id="rodovia"
+                            required
+                            placeholder="Ex.: 116"
+                    >
+                </div>
+
+
+                <div class="campo">
+                    <label for="quilometro">
+                        Quilômetro *
+                    </label>
+
+                    <input
+                            type="number"
+                            id="quilometro"
+                            min="0"
+                            step="0.1"
+                            required
+                            placeholder="Ex.: 230.5"
+                    >
+                </div>
+
+
+                <div class="campo campo-grande">
+                    <label for="causaAcidente">
+                        Causa do acidente *
+                    </label>
+
+                    <input
+                            type="text"
+                            id="causaAcidente"
+                            required
+                            placeholder="Ex.: Velocidade incompatível"
+                    >
+                </div>
+
+
+                <div class="campo campo-grande">
+                    <label for="classificacao">
+                        Classificação *
+                    </label>
+
+                    <input
+                            type="text"
+                            id="classificacao"
+                            required
+                            placeholder="Ex.: Com vítimas feridas"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="acoes-form">
+
+                <button
+                        type="submit"
+                        id="btnSalvar"
+                        class="btn btn-primario"
+                >
+                    Salvar acidente
+                </button>
+
+                <button
+                        type="button"
+                        id="btnCancelarEdicao"
+                        class="btn btn-secundario oculto"
+                >
+                    Cancelar edição
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================
+         IMPORTAÇÃO
+    ========================== -->
+
+    <section class="secao">
+
+        <div class="secao-titulo">
+
+            <div>
+                <h2>Importar dados da PRF</h2>
+
+                <p>
+                    Selecione o arquivo CSV oficial para realizar a importação.
+                </p>
+            </div>
+
+        </div>
+
+
+        <form id="formImportacao">
+
+            <div class="upload-area">
+
+                <input
+                        type="file"
+                        id="arquivoCsv"
+                        accept=".csv"
+                        required
+                >
+
+                <button
+                        type="submit"
+                        class="btn btn-primario"
+                >
+                    Importar CSV
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <div
+                id="resultadoImportacao"
+                class="resultado-importacao oculto"
+        >
+
+            <h3>Resultado da importação</h3>
+
+            <div class="cards cards-importacao">
+
+                <div class="card">
+                    <span>Linhas lidas</span>
+                    <strong id="linhasLidas">0</strong>
+                </div>
+
+                <div class="card">
+                    <span>Importadas</span>
+                    <strong id="linhasImportadas">0</strong>
+                </div>
+
+                <div class="card">
+                    <span>Rejeitadas</span>
+                    <strong id="linhasRejeitadas">0</strong>
+                </div>
+
+                <div class="card">
+                    <span>Duplicadas</span>
+                    <strong id="linhasDuplicadas">0</strong>
+                </div>
+
+            </div>
+
+            <p id="mensagemImportacao"></p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         TABELA
+    ========================== -->
+
+    <section class="secao">
+
+        <div class="secao-titulo">
+
+            <div>
+                <h2>Acidentes registrados</h2>
+
+                <p>
+                    Dados cadastrados e importados pela API.
+                </p>
+            </div>
+
+            <button
+                    type="button"
+                    id="btnAtualizar"
+                    class="btn btn-secundario"
+            >
+                Atualizar
+            </button>
+
+        </div>
+
+
+        <div class="tabela-container">
+
+            <table id="tabelaAcidentes">
+
+                <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>ID PRF</th>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>UF</th>
+                    <th>Município</th>
+                    <th>Rodovia</th>
+                    <th>KM</th>
+                    <th>Causa</th>
+                    <th>Classificação</th>
+                    <th>Ações</th>
+                </tr>
+
+                </thead>
+
+                <tbody id="corpoTabela">
+
+                <tr>
+                    <td colspan="11">
+                        Carregando dados...
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         GRÁFICO
+    ========================== -->
+
+    <section class="secao">
+
+        <div class="secao-titulo">
+
+            <div>
+                <h2>Acidentes por UF</h2>
+
+                <p>
+                    Distribuição dos acidentes cadastrados por estado.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="grafico-container">
+            <canvas id="graficoUf"></canvas>
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="rodape">
+
+    <div class="container">
+
+        <p>
+            SAAR PRF - Sistema de Análise de Acidentes Rodoviários
+        </p>
+
+        <p>
+            Projeto acadêmico - Programação Avançada Orientada a Objetos
+        </p>
+
+    </div>
+
+</footer>
+
+
+<script src="js/app.js"></script>
+
+</body>
+</html>
